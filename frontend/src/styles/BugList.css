@@ -1,0 +1,133 @@
+/* Container */
+.buglist-container {
+  padding: 30px;
+  max-width: 1000px;
+  margin: auto;
+}
+
+/* List styling */
+.bug-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.bug-list li {
+  background-color: #2a2a3d;
+  padding: 20px;
+  margin-bottom: 15px;
+  border-radius: 10px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.4);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.bug-list li:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.6);
+}
+
+/* Bug title */
+.bug-title {
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #4cafef;
+}
+
+/* Bug meta info */
+.bug-meta {
+  font-size: 0.9rem;
+  color: #aaa;
+}
+
+/* Status badges */
+.status {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 5px;
+  font-size: 0.8rem;
+  font-weight: bold;
+  margin-right: 8px;
+}
+
+.status.open { background-color: #ff9800; color: #fff; }
+.status.closed { background-color: #4caf50; color: #fff; }
+.status.inprogress { background-color: #2196f3; color: #fff; }
+.status.reopened { background-color: #e91e63; color: #fff; }
+
+/* Action buttons */
+.bug-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.bug-actions button {
+  padding: 8px 14px;
+  background-color: #4cafef;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  color: #fff;
+  font-size: 0.9rem;
+}
+
+.bug-actions button:hover {
+  background-color: #3a9bdc;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .bug-list li {
+    padding: 15px;
+  }
+  .bug-actions {
+    flex-direction: column;
+    gap: 8px;
+  }
+}
+/* Filter/Search bar */
+.bug-filters {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.bug-filters select,
+.bug-filters input {
+  padding: 8px 12px;
+  border-radius: 5px;
+  border: none;
+  background-color: #2a2a3d;
+  color: #fff;
+}
+
+.bug-filters input::placeholder {
+  color: #aaa;
+}
+
+.bug-filters select:focus,
+.bug-filters input:focus {
+  outline: 2px solid #4cafef;
+}
+/* Sorting bar */
+.bug-sorting {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.bug-sorting select {
+  padding: 8px 12px;
+  border-radius: 5px;
+  border: none;
+  background-color: #2a2a3d;
+  color: #fff;
+}
+
+.bug-sorting select:focus {
+  outline: 2px solid #4cafef;
+}
