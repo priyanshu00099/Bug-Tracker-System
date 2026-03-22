@@ -4,7 +4,7 @@ import "../styles/Dashboard.css";
 import "../components/Dashboard";
 import TopNav from "../components/TopNav";
 import { Pie, Line } from "react-chartjs-2";
-import { getBugs } from "../services/api";
+import { getAllBugs } from "../services/api";
 
 const AdminDashboard = () => {
   const [bugs, setBugs] = useState([]);
@@ -13,7 +13,7 @@ const AdminDashboard = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const data = await getBugs();
+        const data = await getAllBugs();
         setBugs(data || []);
       } catch (error) {
         console.error("Failed to fetch bugs:", error.message);

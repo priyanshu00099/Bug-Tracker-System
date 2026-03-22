@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from "react";
 import "../styles/global.css";
 import "../styles/Dashboard.css";
-import "../components/Dashboard";
 import TopNav from "../components/TopNav";
 import { Bar } from "react-chartjs-2";
-import { getBugs } from "../services/api";
+import { getTesterBugs } from "../services/api";
 
 const TesterDashboard = () => {
   const [bugs, setBugs] = useState([]);
@@ -12,19 +11,25 @@ const TesterDashboard = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      const data = await getBugs();
-      setBugs(data);
+      try {
+        const data = await getTesterBugs();
+        // Ensure data is an array before setting it
+        setBugs(Array.isArray(data) ? data : []);
+      } catch (err) {
+        console.error("Frontend Error:", err);
+        setBugs([]); // Reset to empty array so the .filter doesn't crash
+      }
     };
     fetchData();
   }, []);
 
-  const reported = bugs.filter(b => b.reporter === "Raj Patel").length;
+  const reported = bugs.length;
   const verified = bugs.filter(b => b.status === "Verified").length;
   const reopened = bugs.filter(b => b.status === "Reopened").length;
 
   const testerData = {
-    labels: ["Raj Patel", "Maria Garcia", "John Doe"],
-    datasets: [{ label: "Bugs Reported", data: [reported, 3, 2], backgroundColor: "#4cafef" }],
+    labels: [userName],
+    datasets: [{ label: "Bugs Reported", data: [reported], backgroundColor: "#4cafef" }],
   };
 
   return (
@@ -32,8 +37,7 @@ const TesterDashboard = () => {
       <div className="sidebar">
         <h2>Bug Tracker</h2>
         <a href="/tester" className="active">Overview</a>
-        <a href="/buglist">Reported Bugs</a>
-        <a href="/analytics">Analytics</a>
+        <a href="/tester/buglist">Reported Bugs</a>
       </div>
 
       <div className="page-left dashboard-container">

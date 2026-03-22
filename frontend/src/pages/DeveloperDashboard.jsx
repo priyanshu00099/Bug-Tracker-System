@@ -4,7 +4,7 @@ import "../styles/Dashboard.css";
 import "../components/Dashboard";
 import TopNav from "../components/TopNav";
 import { Bar } from "react-chartjs-2";
-import { getBugs } from "../services/api";
+import { getAssignedBugs } from "../services/api";
 
 const DeveloperDashboard = () => {
   const [bugs, setBugs] = useState([]);
@@ -12,20 +12,30 @@ const DeveloperDashboard = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      const data = await getBugs();
-      setBugs(data);
+      try {
+        const data = await getAssignedBugs();
+        setBugs(Array.isArray(data) ? data : []);
+      } catch (err) {
+        console.error("Failed to fetch bugs", err);
+      }
     };
     fetchData();
   }, []);
 
-  const assigned = bugs.filter(b => b.assignee === "Alex Kim").length;
-  const resolved = bugs.filter(b => b.assignee === "Alex Kim" && b.status === "Closed").length;
-  const critical = bugs.filter(b => b.assignee === "Alex Kim" && b.severity === "Critical").length;
+  // --- REMOVE THE userId FILTER LINE ---
+  // Just use the 'bugs' array directly because the backend already filtered it!
+  
+  const assigned = bugs.length; 
+  const resolved = bugs.filter(b => b.status === "Closed").length;
+  // Make sure 'priority' or 'severity' matches your database column name
+  const critical = bugs.filter(b => b.priority === "High" || b.severity === "Critical").length;
 
   const performanceData = {
-    labels: ["Alex Kim", "James", "Priya"],
+    labels: [userName, "James", "Priya"],
     datasets: [{ label: "Bugs Resolved", data: [resolved, 2, 1], backgroundColor: "#4cafef" }],
   };
+
+  // ... rest of your JSX
 
   return (
     <div className="page-layout">

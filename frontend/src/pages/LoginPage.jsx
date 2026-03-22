@@ -17,16 +17,17 @@ const LoginPage = ({ onLogin }) => {
         password,
       });
 
-      const { token, role, name } = response.data;
+      const { token, role, name, id } = response.data; // 1. Added 'id' here
 
-      if (!token) {
-        setError("Login failed: no token received");
-        return;
-      }
+        if (!token) {
+          setError("Login failed: no token received");
+          return;
+        }
 
       localStorage.setItem("token", token);
       localStorage.setItem("role", role);
       localStorage.setItem("name", name);
+      localStorage.setItem("id", id); // 2. Add this line!
 
       if (onLogin) onLogin(role);
 

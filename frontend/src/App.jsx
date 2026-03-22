@@ -22,7 +22,7 @@ function App() {
         <Route
           path="/developer"
           element={
-            <ProtectedRoute>
+            <ProtectedRoute allowedRoles={["developer"]}>
               <DeveloperDashboard />
             </ProtectedRoute>
           }
@@ -31,7 +31,7 @@ function App() {
         <Route
           path="/tester"
           element={
-            <ProtectedRoute>
+            <ProtectedRoute allowedRoles={["tester"]}>
               <TesterDashboard />
             </ProtectedRoute>
           }
@@ -40,7 +40,7 @@ function App() {
         <Route
           path="/admin"
           element={
-            <ProtectedRoute>
+            <ProtectedRoute allowedRoles={["admin"]}>
               <AdminDashboard />
             </ProtectedRoute>
           }
@@ -50,6 +50,33 @@ function App() {
           path="/buglist"
           element={
             <ProtectedRoute>
+              <BugList />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/tester/buglist"
+          element={
+            <ProtectedRoute allowedRoles={["tester"]}>
+              <BugList />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/admin/buglist"
+          element={
+            <ProtectedRoute allowedRoles={["admin"]}>
+              <BugList />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/developer/buglist"
+          element={
+            <ProtectedRoute allowedRoles={["developer"]}>
               <BugList />
             </ProtectedRoute>
           }

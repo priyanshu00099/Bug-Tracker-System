@@ -3,24 +3,37 @@ const router = express.Router();
 const bugController = require('../controllers/bugController');
 const auth = require('../middleware/auth');
 
-// Tester can report bugs
-router.post('/', auth(), bugController.createBug);
+// --- TESTER ROUTES ---
 
-// Admin can assign bugs
+// Report a new bug
+router.post('/', auth(['Tester']), bugController.createBug);
+
+// View only bugs reported by the current Tester
+router.get('/reported', auth(['Tester']), bugController.getTesterBugs);
+
+
+// --- DEVELOPER ROUTES ---
+
+// View bugs assigned to the current Developer
+router.get('/assigned', auth(['Developer']), bugController.getAssignedBugs);
+
+// View closed bug history for the current Developer
+router.get('/history', auth(['Developer']), bugController.getBugHistory);
+
+// Update status (e.g., from Open to Fixed)
+router.put('/:id/status', auth(['Developer', 'Admin']), bugController.updateStatus);
+
+
+// --- ADMIN ROUTES ---
+
+// View ALL bugs in the system
+router.get('/', auth(['Admin']), bugController.getAllBugs);
+
+// Assign a bug to a developer
 router.put('/:id/assign', auth(['Admin']), bugController.assignBug);
 
-// Developer can update status
-router.put('/:id/status', auth(['Developer']), bugController.updateStatus);
+// Delete a bug record
+router.delete('/:id', auth(['Admin']), bugController.deleteBug);
 
-router.get("/", auth(["Admin", "Tester"]), async (req, res) => {
-    try {
-      const bugs = await Bug.find(); // or your DB query
-      res.json(bugs);
-    } catch (err) {
-      res.status(500).json({ error: "Server error" });
-    }
-  });
-
-router.delete('/:id', auth(['Admin']), bugController.deleteBug)
 
 module.exports = router;
