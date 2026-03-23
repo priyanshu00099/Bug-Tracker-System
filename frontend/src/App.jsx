@@ -6,7 +6,7 @@ import TesterDashboard from "./pages/TesterDashboard";
 import AdminDashboard from "./pages/AdminDashboard";
 import BugList from "./components/BugList";
 import ProtectedRoute from "./components/ProtectedRoute";
-import FrontPage from "./pages/FrontPage";
+import LandingPage from "./pages/LandingPage";
 
 function App() {
   const [role, setRole] = useState(localStorage.getItem("role") || null);
@@ -18,7 +18,7 @@ function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<FrontPage />} />
+        <Route path="/" element={<LandingPage />} />
         <Route path="/login" element={<LoginPage />} />
 
         <Route path="/" element={<LoginPage onLogin={handleLogin} />} />
