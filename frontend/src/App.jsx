@@ -7,6 +7,8 @@ import AdminDashboard from "./pages/AdminDashboard";
 import BugList from "./components/BugList";
 import ProtectedRoute from "./components/ProtectedRoute";
 import LandingPage from "./pages/LandingPage";
+import AnalyticsDashboard from "./pages/AnalyticsDashboard";
+import AdminReportedBugs from "./pages/AdminReportedBugs";
 
 function App() {
   const [role, setRole] = useState(localStorage.getItem("role") || null);
@@ -55,6 +57,24 @@ function App() {
           element={
             <ProtectedRoute>
               <BugList />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/analytics"
+          element={
+            <ProtectedRoute allowedRoles={["admin", "developer"]}>
+              <AnalyticsDashboard />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/admin/reported-bugs"
+          element={
+            <ProtectedRoute allowedRoles={["admin"]}>
+              <AdminReportedBugs />
             </ProtectedRoute>
           }
         />

@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from "react";
 import "../styles/global.css";
 import "../styles/Dashboard.css";
-import "../components/Dashboard";
+import NavBar from "../components/NavBar";
 import TopNav from "../components/TopNav";
+import "../components/Dashboard";
+import { AlertCircleIcon, ActivityIcon, CheckCircleIcon, ListIcon } from "../components/Icons";
 import { Bar } from "react-chartjs-2";
 import { getAssignedBugs } from "../services/api";
 
@@ -22,44 +24,63 @@ const DeveloperDashboard = () => {
     fetchData();
   }, []);
 
-  // --- REMOVE THE userId FILTER LINE ---
-  // Just use the 'bugs' array directly because the backend already filtered it!
-  
   const assigned = bugs.length; 
   const resolved = bugs.filter(b => b.status === "Closed").length;
-  // Make sure 'priority' or 'severity' matches your database column name
   const critical = bugs.filter(b => b.priority === "High" || b.severity === "Critical").length;
 
   const performanceData = {
     labels: [userName, "James", "Priya"],
-    datasets: [{ label: "Bugs Resolved", data: [resolved, 2, 1], backgroundColor: "#4cafef" }],
+    datasets: [{ label: "Bugs Resolved", data: [resolved, 2, 1], backgroundColor: "#3fb950", borderRadius: 4 }],
   };
 
-  // ... rest of your JSX
-
   return (
-    <div className="page-layout">
-      <div className="sidebar">
-        <h2>Bug Tracker</h2>
-        <a href="/developer" className="active">Overview</a>
-        <a href="/buglist">My Bugs</a>
-        <a href="/analytics">Performance</a>
-      </div>
+    <div className="app-container">
+      <div className="grid-background" />
+      <div className="gradient-orb gradient-orb-1" />
+      <div className="gradient-orb gradient-orb-2" />
+      
+      <NavBar role="developer" activePath="/developer" />
 
-      <div className="page-left dashboard-container">
-        <TopNav userName={userName} />
+      <main className="main-wrapper">
+        <TopNav userName={userName} breadcrumb="Overview" />
 
-        <div className="dashboard-cards">
-          <div className="card"><h3>Assigned Bugs</h3><p>{assigned}</p></div>
-          <div className="card"><h3>Resolved</h3><p>{resolved}</p></div>
-          <div className="card"><h3>Critical</h3><p>{critical}</p></div>
+        <div className="main-content">
+          <div className="page-header">
+            <h1 className="page-title">Developer Workspace</h1>
+          </div>
+
+          <div className="metrics-grid">
+            <div className="metric-card">
+              <div className="metric-info">
+                <h3>Assigned Bugs</h3>
+                <p>{assigned}</p>
+              </div>
+              <div className="metric-icon"><ListIcon size={24}/></div>
+            </div>
+            <div className="metric-card">
+              <div className="metric-info">
+                <h3>Resolved</h3>
+                <p>{resolved}</p>
+              </div>
+              <div className="metric-icon"><CheckCircleIcon size={24}/></div>
+            </div>
+            <div className="metric-card">
+              <div className="metric-info">
+                <h3>Critical</h3>
+                <p>{critical}</p>
+              </div>
+              <div className="metric-icon"><AlertCircleIcon size={24}/></div>
+            </div>
+          </div>
+
+          <div className="charts-grid">
+            <div className="chart-container">
+              <h3>Developer Performance</h3>
+              <Bar key={JSON.stringify(performanceData)} data={performanceData} options={{ responsive: true }} />
+            </div>
+          </div>
         </div>
-
-        <div className="card">
-          <h3>Developer Performance</h3>
-          <Bar key={JSON.stringify(performanceData)} data={performanceData} />
-        </div>
-      </div>
+      </main>
     </div>
   );
 };

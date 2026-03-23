@@ -13,6 +13,11 @@ export const getAllBugs = async () => {
   return res.data;
 };
 
+export const getAllUsers = async () => {
+  const res = await axios.get(`${API_BASE}/bugs/users/all`, { headers: getAuthHeaders() });
+  return res.data;
+};
+
 // Tester
 export const getTesterBugs = async () => {
   const res = await axios.get(`${API_BASE}/bugs/reported`, { headers: getAuthHeaders() });
@@ -43,8 +48,18 @@ export const deleteBug = async (id) => {
   return res.data;
 };
 
-export const updateBugStatus = async (id, status) => {
-  const res = await axios.put(`${API_BASE}/bugs/${id}/status`, { status }, { 
+export const assignBug = async (id, developerId) => {
+  const res = await axios.put(`${API_BASE}/bugs/${id}/assign`, { assignedTo: developerId }, { 
+    headers: getAuthHeaders() 
+  });
+  return res.data;
+};
+
+export const updateBugStatus = async (id, status, appendDescription = null) => {
+  const payload = { status };
+  if (appendDescription) payload.appendDescription = appendDescription;
+  
+  const res = await axios.put(`${API_BASE}/bugs/${id}/status`, payload, { 
     headers: getAuthHeaders() 
   });
   return res.data;
