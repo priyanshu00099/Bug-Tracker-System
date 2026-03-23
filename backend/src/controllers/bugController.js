@@ -1,4 +1,5 @@
 const Bug = require('../models/Bugs');
+const User = require('../models/Users');
 
 // 1. Admin: Get ALL bugs
 exports.getAllBugs = async (req, res) => {
@@ -54,12 +55,20 @@ exports.getBugHistory = async (req, res) => {
 exports.createBug = async (req, res) => {
   try {
     const { title, description, priority } = req.body;
+    let imageUrl = null;
+    
+    // Safely extract active multer local storage route
+    if (req.file) {
+      imageUrl = `/uploads/${req.file.filename}`;
+    }
+
     const bug = await Bug.create({
       title,
       description,
       priority,
       status: "Open",
-      reporter_id: req.user.id // Save the ID, not the name
+      imageUrl,
+      reporter_id: req.user.id 
     });
     res.status(201).json(bug);
   } catch (err) {
@@ -85,7 +94,7 @@ exports.assignBug = async (req, res) => {
   }
 };
 
-// 7. Developer/Admin: Update Status
+// 7. Developer/Admin/Tester: Update Status
 exports.updateStatus = async (req, res) => {
   try {
     const { id } = req.params;
@@ -95,6 +104,14 @@ exports.updateStatus = async (req, res) => {
     if (!bug) return res.status(404).json({ error: 'Bug not found' });
 
     bug.status = status;
+    
+    console.log("=== INCOMING STATUS UPDATE ===");
+    console.log(`ID: ${id} | Role: ${req.user.role} | New Status: ${status}`);
+    console.log(`Appended Desc Payload:`, req.body.appendDescription);
+    
+    if (req.body.appendDescription) {
+       bug.description = bug.description + `\n\n${req.body.appendDescription}`;
+    }
     await bug.save();
 
     res.json({ message: 'Status updated', bug });
@@ -116,3 +133,13 @@ exports.deleteBug = async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 };  
+
+// 9. Admin: Get all users for mapping
+exports.getAllUsersList = async (req, res) => {
+  try {
+    const users = await User.findAll({ attributes: ['id', 'name', 'role'] });
+    res.json(users);
+  } catch(err) {
+    res.status(500).json({ error: err.message });
+  }
+};

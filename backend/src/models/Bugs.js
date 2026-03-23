@@ -22,6 +22,10 @@ const Bug = sequelize.define('Bug', {
     type: DataTypes.INTEGER,
     allowNull: false
   },
+  imageUrl: {
+    type: DataTypes.STRING,
+    allowNull: true
+  },
   assignee_id: {
     type: DataTypes.INTEGER,
     allowNull: true

@@ -1,27 +1,28 @@
 import React, { useEffect, useState } from "react";
-// 1. Import all necessary functions
 import { 
   getAllBugs, 
   getTesterBugs, 
   getAssignedBugs, 
   updateBugStatus, 
-  deleteBug 
+  deleteBug,
+  getAllUsers
 } from "../services/api";
 import "../styles/global.css";
 import "../styles/Dashboard.css";
 import "../styles/BugList.css";
+import NavBar from "./NavBar";
 import TopNav from "./TopNav";
 
 const BugList = () => {
   const [bugs, setBugs] = useState([]);
+  const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const role = localStorage.getItem("role")?.toLowerCase(); // Get the role
+  const role = localStorage.getItem("role")?.toLowerCase(); 
 
   const fetchBugs = async () => {
     try {
       let data;
-      // 2. Call the correct API based on role
       if (role === "admin") data = await getAllBugs();
       else if (role === "tester") data = await getTesterBugs();
       else if (role === "developer") data = await getAssignedBugs();
@@ -29,75 +30,132 @@ const BugList = () => {
       setBugs(Array.isArray(data) ? data : []);
     } catch (err) {
       setError("Failed to load bugs. Access denied or server error.");
-    } finally {
-      setLoading(false);
     }
+    
+    if (role === "admin") {
+      try {
+        const userList = await getAllUsers();
+        setUsers(userList || []);
+      } catch (err) {}
+    }
+    setLoading(false);
   };
 
   useEffect(() => {
     fetchBugs();
   }, [role]);
 
-  // 3. Proper Delete Handler
   const handleDelete = async (id) => {
     if (window.confirm("Are you sure you want to delete this bug?")) {
       try {
         await deleteBug(id);
-        setBugs(bugs.filter(bug => bug.id !== id)); // Remove from UI immediately
+        setBugs(bugs.filter(bug => bug.id !== id));
       } catch (err) {
         alert("Failed to delete bug.");
       }
     }
   };
 
-  // 4. Proper Status Update Handler
-  const handleStatusUpdate = async (id, status) => {
+  const handleStatusUpdate = async (id, status, rejectReason = null) => {
     try {
-      await updateBugStatus(id, status);
-      // Update the status in the local state
-      setBugs(bugs.map(bug => bug.id === id ? { ...bug, status } : bug));
+      const res = await updateBugStatus(id, status, rejectReason);
+      setBugs(bugs.map(bug => bug.id === id ? { ...bug, status, description: res.bug?.description || bug.description } : bug));
     } catch (err) {
       alert("Failed to update status.");
     }
   };
 
-  if (loading) return <p>Loading bugs...</p>;
-  if (error) return <p className="error">{error}</p>;
+  // Safe path determination for sidebar
+  const getSidebarPath = () => {
+    return role === "tester" ? "/tester/buglist" : "/buglist";
+  };
 
   return (
-    <div className="page-layout">
-      {/* Sidebar logic should also check role for links */}
-      <div className="sidebar">
-        <h2>Bug Tracker</h2>
-        <a href={`/${role}`} className="active">Overview</a>
-        <a href="/buglist">Bug List</a>
-      </div>
+    <div className="app-container">
+      <div className="grid-background" />
+      <div className="gradient-orb gradient-orb-1" />
+      <div className="gradient-orb gradient-orb-2" />
+      
+      <NavBar role={role} activePath={getSidebarPath()} />
 
-      <div className="page-left dashboard-container buglist-container">
-        <TopNav userName={localStorage.getItem("name") || "User"} />
+      <main className="main-wrapper">
+        <TopNav userName={localStorage.getItem("name") || "User"} breadcrumb="Bug Backlog" />
 
-        <ul className="bug-list">
-          {bugs.length === 0 ? <p>No bugs found.</p> : bugs.map((bug) => (
-            <li key={bug.id}>
-              <div className="bug-title">{bug.title}</div>
-              <div className="bug-meta">
-                {/* Note: Ensure these keys match your SQL column names! */}
-                Reporter ID: {bug.reporter_id} | Assignee ID: {bug.assignedTo}
-              </div>
-              <div className={`status ${bug.status.toLowerCase()}`}>{bug.status}</div>
-              
-              <div className="bug-actions">
-                {/* 5. Use the wrapper functions we created */}
-                <button onClick={() => handleStatusUpdate(bug.id, "Open")}>Open</button>
-                <button onClick={() => handleStatusUpdate(bug.id, "Closed")}>Close</button>
-                {role === "admin" && (
-                   <button className="btn-delete" onClick={() => handleDelete(bug.id)}>Delete</button>
-                )}
-              </div>
-            </li>
-          ))}
-        </ul>
-      </div>
+        <div className="main-content">
+          <div className="page-header">
+            <h1 className="page-title">Bug Backlog</h1>
+          </div>
+
+          <div className="buglist-container">
+            {loading && <p>Loading bugs...</p>}
+            {error && <p className="error-message">{error}</p>}
+            
+            {!loading && !error && (
+              <ul className="bug-list">
+                {bugs.length === 0 ? <p>No bugs found.</p> : bugs.map((bug) => (
+                  <li key={bug.id}>
+                    <div className="bug-header">
+                      <div className="bug-title">{bug.title}</div>
+                      <div className={`status ${bug.status.toLowerCase().replace(/\s/g, "")}`}>{bug.status}</div>
+                    </div>
+                    
+                    <div className="bug-meta">
+                      {role === "admin" ? (
+                        <>
+                          Reporter: {users.find(u => u.id === bug.reporter_id)?.name || "Unknown"} (ID: {bug.reporter_id}) | 
+                          Assigned To: {bug.assignedTo ? `${users.find(u => u.id === bug.assignedTo)?.name || "Unknown"} (ID: ${bug.assignedTo})` : "Unassigned"}
+                        </>
+                      ) : (
+                        <>Reporter ID: {bug.reporter_id} | Assignee ID: {bug.assignedTo}</>
+                      )}
+                    </div>
+                    
+                    <div className="bug-details" style={{ marginTop: '12px', padding: '16px', backgroundColor: 'rgba(0,0,0,0.2)', borderRadius: '6px', borderLeft: '3px solid var(--accent-blue)' }}>
+                      <p style={{ whiteSpace: 'pre-wrap', color: 'var(--text-secondary)', fontSize: '0.9rem', margin: '0', wordBreak: 'break-word' }}>{bug.description}</p>
+                      {bug.imageUrl && (
+                        <div style={{ marginTop: '16px' }}>
+                          <img src={`http://localhost:5000${bug.imageUrl}`} alt="Bug Attachment" style={{ maxWidth: '100%', maxHeight: '400px', borderRadius: '4px', border: '1px solid var(--border-color)' }} />
+                        </div>
+                      )}
+                    </div>
+                    
+                    <div className="bug-actions" style={{ marginTop: '16px' }}>
+                      {role === "admin" && (
+                         <button className="btn-delete" style={{ backgroundColor: 'var(--danger-red)'}} onClick={() => handleDelete(bug.id)}>Discard Issue</button>
+                      )}
+                      
+                      {role === "tester" && bug.status === "Resolved" && (
+                        <>
+                          <button style={{ backgroundColor: 'var(--accent-green)'}} onClick={() => handleStatusUpdate(bug.id, "Closed")}>Verify (Close)</button>
+                          <button style={{ backgroundColor: 'var(--danger-red)'}} onClick={() => {
+                            const reason = window.prompt("Reason for rejection:");
+                            if (reason) handleStatusUpdate(bug.id, "In Progress", `--- REJECTED BY TESTER ---\nReason: ${reason}`);
+                          }}>Reject (Return)</button>
+                        </>
+                      )}
+                      
+                      {role === "developer" && bug.status === "Open" && (
+                        <button onClick={() => handleStatusUpdate(bug.id, "In Progress")}>Start Work</button>
+                      )}
+                      
+                      {role === "developer" && bug.status === "In Progress" && (
+                        <button style={{ backgroundColor: 'var(--accent-green)'}} onClick={() => {
+                          const details = window.prompt("Resolution Details (Required):");
+                          if (details) {
+                            handleStatusUpdate(bug.id, "Resolved", `--- FIXED BY DEVELOPER ---\nDetails: ${details}`);
+                          } else {
+                            alert("Action aborted: You must provide resolution details to mark a bug resolved.");
+                          }
+                        }}>Mark Resolved</button>
+                      )}
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+        </div>
+      </main>
     </div>
   );
 };

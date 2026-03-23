@@ -14,10 +14,14 @@ app.use('/api/bugs', bugRoutes);
 const authRoutes = require("./src/routes/authRoutes");
 app.use('/api/auth', authRoutes);
 
+// Static Image Hosting
+const path = require('path');
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
 // DB
 const sequelize = require('./src/config/database');
-sequelize.sync()
-  .then(() => console.log("✅ Database synced"))
+sequelize.sync({ alter: true })
+  .then(() => console.log("✅ Database synced and altered"))
   .catch(err => console.error("❌ DB sync error:", err));
 
 // Test route
