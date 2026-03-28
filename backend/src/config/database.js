@@ -8,8 +8,15 @@ const sequelize = new Sequelize(
   process.env.DB_PASSWORD, // password
   {
     host: process.env.DB_HOST, // e.g. 'localhost'
-    dialect: 'mysql',          // or 'postgres'
-    logging: false             // disable SQL logging
+    port: process.env.DB_PORT || 5432, // required if using a connection pooler like port 6543 on Supabase
+    dialect: 'postgres',       // changed from mysql to postgres
+    logging: false,            // disable SQL logging
+    dialectOptions: {
+      ssl: {
+        require: true,
+        rejectUnauthorized: false
+      }
+    }
   }
 );
 
