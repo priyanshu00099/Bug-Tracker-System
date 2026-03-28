@@ -4,7 +4,18 @@ require("dotenv").config();
 
 const app = express();
 
-app.use(cors({ origin: "https://bug-tracker-system-9446stc7y-priyanshu00099s-projects.vercel.app", credentials: true }));
+app.use(cors({ 
+  origin: function (origin, callback) {
+    // Allow requests with no origin (like mobile apps or curl requests)
+    if (!origin) return callback(null, true);
+    // Allow any vercel.app subdomain or localhost
+    if (origin.endsWith('.vercel.app') || origin.startsWith('http://localhost')) {
+      return callback(null, true);
+    }
+    return callback(new Error('Not allowed by CORS'), false);
+  }, 
+  credentials: true 
+}));
 app.use(express.json());
 
 // Routes
