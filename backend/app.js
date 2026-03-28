@@ -4,7 +4,7 @@ require("dotenv").config();
 
 const app = express();
 
-app.use(cors({ origin: true, credentials: true }));
+app.use(cors({ origin: "https://bug-tracker-system-9446stc7y-priyanshu00099s-projects.vercel.app", credentials: true }));
 app.use(express.json());
 
 // Routes
