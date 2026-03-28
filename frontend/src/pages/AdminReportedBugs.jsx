@@ -189,7 +189,7 @@ const AdminReportedBugs = () => {
                         <p style={{ whiteSpace: 'pre-wrap', color: 'var(--text-secondary)', fontSize: '0.9rem', margin: '0', wordBreak: 'break-word' }}>{bug.description}</p>
                         {bug.imageUrl && (
                           <div style={{ marginTop: '16px' }}>
-                            <img src={`http://localhost:5000${bug.imageUrl}`} alt="Bug Attachment" style={{ maxWidth: '100%', maxHeight: '400px', borderRadius: '4px', border: '1px solid var(--border-color)' }} />
+                            <img src={`${(import.meta.env.VITE_API_BASE || "https://bug-tracker-system-2mjo.onrender.com/api").replace('/api', '')}${bug.imageUrl}`} alt="Bug Attachment" style={{ maxWidth: '100%', maxHeight: '400px', borderRadius: '4px', border: '1px solid var(--border-color)' }} />
                           </div>
                         )}
                       </div>

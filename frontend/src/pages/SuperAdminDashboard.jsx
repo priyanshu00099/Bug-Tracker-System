@@ -58,7 +58,7 @@ const SuperAdminDashboard = () => {
   const handleAddUser = async (e) => {
     e.preventDefault();
     try {
-      await axios.post(`http://${window.location.hostname}:5000/api/auth/register`, newUser);
+      await axios.post(`${import.meta.env.VITE_API_BASE || "https://bug-tracker-system-2mjo.onrender.com/api"}/auth/register`, newUser);
       alert("User created successfully!");
       setShowAddModal(false);
       setNewUser({ name: "", email: "", password: "", role: "Developer" });

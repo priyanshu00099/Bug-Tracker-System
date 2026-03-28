@@ -27,7 +27,7 @@ export default function LoginPage() {
     }
 
     try {
-      const res = await axios.post(`http://${window.location.hostname}:5000/api/auth/login`, {
+      const res = await axios.post(`${import.meta.env.VITE_API_BASE || "https://bug-tracker-system-2mjo.onrender.com/api"}/auth/login`, {
         email,
         password,
       });
