@@ -9,6 +9,7 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import LandingPage from "./pages/LandingPage";
 import AnalyticsDashboard from "./pages/AnalyticsDashboard";
 import AdminReportedBugs from "./pages/AdminReportedBugs";
+import SuperAdminDashboard from "./pages/SuperAdminDashboard";
 
 function App() {
   const [role, setRole] = useState(localStorage.getItem("role") || null);
@@ -102,6 +103,15 @@ function App() {
           element={
             <ProtectedRoute allowedRoles={["developer"]}>
               <BugList />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/superadmin"
+          element={
+            <ProtectedRoute allowedRoles={["superadmin"]}>
+              <SuperAdminDashboard />
             </ProtectedRoute>
           }
         />

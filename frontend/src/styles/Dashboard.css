@@ -336,3 +336,59 @@ form button {
   border: none;
   border-radius: 8px;
 }
+
+/* Mobile Responsiveness */
+.mobile-menu-btn-alt {
+  display: none;
+  background: transparent;
+  border: none;
+  color: var(--text-primary);
+  cursor: pointer;
+  padding: 4px;
+  margin-right: 12px;
+  align-items: center;
+  justify-content: center;
+}
+
+@media (max-width: 768px) {
+  .app-sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    transform: translateX(-100%);
+    transition: transform 0.3s ease-in-out;
+    box-shadow: 4px 0 24px rgba(0,0,0,0.5);
+    z-index: 1000;
+  }
+  .app-sidebar.mobile-open {
+    transform: translateX(0);
+  }
+  .app-header {
+    padding: 0 16px;
+  }
+  .main-content {
+    padding: 16px;
+  }
+  .charts-grid {
+    grid-template-columns: 1fr;
+  }
+  .page-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+  }
+  .mobile-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.5);
+    z-index: 999;
+    backdrop-filter: blur(4px);
+  }
+  .mobile-menu-btn-alt {
+    display: flex;
+  }
+  .header-breadcrumbs {
+    font-size: 0.8rem;
+  }
+}

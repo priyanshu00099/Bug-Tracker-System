@@ -16,13 +16,14 @@ exports.login = async (req, res) => {
       { 
         id: user.id, 
         role: user.role, 
-        name: user.name  // <--- ENSURE THIS LINE EXISTS
+        name: user.name,
+        additional_roles: user.additional_roles
       }, 
       process.env.JWT_SECRET, 
       { expiresIn: '1d' }
     );
 
-    res.json({ token, role: user.role, name: user.name });
+    res.json({ token, role: user.role, name: user.name, additional_roles: user.additional_roles || "" });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

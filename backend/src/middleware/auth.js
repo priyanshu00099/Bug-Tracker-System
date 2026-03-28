@@ -15,7 +15,13 @@ const auth = (roles = []) => {
       if (roles.length > 0) {
         const allowedRoles = roles.map(r => r.toLowerCase());
         const userRole = req.user.role.toLowerCase();
-        if (!allowedRoles.includes(userRole)) {
+        
+        // Parse additional roles
+        const userAdditionalRoles = (req.user.additional_roles || "").split(",").map(r => r.trim().toLowerCase()).filter(Boolean);
+        
+        const hasAccess = allowedRoles.includes(userRole) || allowedRoles.some(r => userAdditionalRoles.includes(r));
+        
+        if (!hasAccess) {
           return res.status(403).json({ error: "Forbidden: role not allowed" });
         }
       }

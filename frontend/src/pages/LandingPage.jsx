@@ -193,8 +193,8 @@ function Header() {
         <a href="#about">About</a>
         <a href="#contact">Contact</a>
         <div className="mobile-menu-buttons">
-          <a href="#" className="btn btn-secondary">Sign In</a>
-          <a href="#" className="btn btn-primary">Get Started</a>
+          <button onClick={() => navigate("/login")} className="btn btn-secondary">Sign In</button>
+          <button onClick={() => navigate("/login")} className="btn btn-primary">Get Started</button>
         </div>
       </div>
     </header>
@@ -234,13 +234,13 @@ function HeroSection() {
         </p>
 
         <div className="hero-buttons">
-          <a href="#" className="btn btn-accent btn-lg">
+          <button onClick={() => window.location.href = "/login"} className="btn btn-accent btn-lg">
             Start Free Trial
             <ArrowRightIcon />
-          </a>
-          <a href="#" className="btn btn-secondary btn-lg">
+          </button>
+          <button onClick={() => window.location.href = "/login"} className="btn btn-secondary btn-lg">
             View Demo
-          </a>
+          </button>
         </div>
 
         <div className="hero-stats">
@@ -399,13 +399,13 @@ function CTASection() {
           software, faster.
         </p>
         <div className="cta-buttons">
-          <a href="#" className="btn btn-accent btn-lg">
+          <button onClick={() => window.location.href = "/login"} className="btn btn-accent btn-lg">
             Start Free Trial
             <ArrowRightIcon />
-          </a>
-          <a href="#" className="btn btn-secondary btn-lg">
+          </button>
+          <button onClick={() => window.location.href = "/login"} className="btn btn-secondary btn-lg">
             Contact Sales
-          </a>
+          </button>
         </div>
       </div>
     </section>

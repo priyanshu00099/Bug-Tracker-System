@@ -27,17 +27,18 @@ export default function LoginPage() {
     }
 
     try {
-      const res = await axios.post("http://localhost:5000/api/auth/login", {
+      const res = await axios.post(`http://${window.location.hostname}:5000/api/auth/login`, {
         email,
         password,
       });
 
-      // Backend should return { token, role, name }
-      const { token, role, name } = res.data;
+      // Backend should return { token, role, name, additional_roles }
+      const { token, role, name, additional_roles } = res.data;
 
       localStorage.setItem("token", token);
       localStorage.setItem("role", role);
       localStorage.setItem("name", name);
+      localStorage.setItem("additional_roles", additional_roles || "");
 
       // Redirect based on role
       if (role.toLowerCase() === "admin") {
@@ -46,6 +47,8 @@ export default function LoginPage() {
         navigate("/tester");
       } else if (role.toLowerCase() === "developer") {
         navigate("/developer");
+      } else if (role.toLowerCase() === "superadmin") {
+        navigate("/superadmin");
       } else {
         navigate("/");
       }

@@ -4,7 +4,7 @@ require("dotenv").config();
 
 const app = express();
 
-app.use(cors({ origin: "http://localhost:5173", credentials: true }));
+app.use(cors({ origin: true, credentials: true }));
 app.use(express.json());
 
 // Routes
@@ -13,6 +13,9 @@ app.use('/api/bugs', bugRoutes);
 
 const authRoutes = require("./src/routes/authRoutes");
 app.use('/api/auth', authRoutes);
+
+const userRoutes = require('./src/routes/userRoutes');
+app.use('/api/users', userRoutes);
 
 // Static Image Hosting
 const path = require('path');

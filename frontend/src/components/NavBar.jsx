@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { BugIcon, GridIcon, ListIcon, ChartIcon, AlertCircleIcon } from "./Icons";
+import { BugIcon, GridIcon, ListIcon, ChartIcon, AlertCircleIcon, XIcon } from "./Icons";
 import { getAllBugs, getAllUsers } from "../services/api";
 
 const AdminTeamWidget = () => {
@@ -69,6 +69,14 @@ const AdminTeamWidget = () => {
 };
 
 export default function NavBar({ role, activePath }) {
+  const [isMobileOpen, setIsMobileOpen] = useState(false);
+
+  useEffect(() => {
+    const handleToggle = () => setIsMobileOpen(prev => !prev);
+    window.addEventListener('toggleSidebar', handleToggle);
+    return () => window.removeEventListener('toggleSidebar', handleToggle);
+  }, []);
+
   const getNavLinks = () => {
     switch (role) {
       case "admin":
@@ -89,6 +97,10 @@ export default function NavBar({ role, activePath }) {
           { label: "Overview", path: "/tester", icon: <GridIcon size={18} /> },
           { label: "Reported Bugs", path: "/tester/buglist", icon: <ListIcon size={18} /> }
         ];
+      case "superadmin":
+        return [
+          { label: "User Management", path: "/superadmin", icon: <GridIcon size={18} /> }
+        ];
       default:
         return [
           { label: "Dashboard", path: "/", icon: <GridIcon size={18} /> },
@@ -100,13 +112,22 @@ export default function NavBar({ role, activePath }) {
   const navLinks = getNavLinks();
 
   return (
-    <aside className="app-sidebar">
-      <div className="sidebar-header">
-        <div className="sidebar-logo">
-          <BugIcon size={20} />
+    <>
+      {isMobileOpen && (
+        <div className="mobile-overlay" onClick={() => setIsMobileOpen(false)} />
+      )}
+      <aside className={`app-sidebar ${isMobileOpen ? "mobile-open" : ""}`}>
+        <div className="sidebar-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+            <div className="sidebar-logo">
+              <BugIcon size={20} />
+            </div>
+            <span className="sidebar-title">Bug Tracker</span>
+          </div>
+          <button className="mobile-menu-btn-alt" onClick={() => setIsMobileOpen(false)}>
+            <XIcon size={24} />
+          </button>
         </div>
-        <span className="sidebar-title">Bug Tracker</span>
-      </div>
       <nav className="sidebar-nav" style={{ marginBottom: role === "admin" ? '24px' : 'auto' }}>
         {navLinks.map((link) => (
           <a key={link.path} href={link.path} className={activePath === link.path ? "active" : ""}>
@@ -116,6 +137,7 @@ export default function NavBar({ role, activePath }) {
         ))}
       </nav>
       {role === "admin" && <AdminTeamWidget />}
-    </aside>
+      </aside>
+    </>
   );
 }

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import ProfileWidget from "./ProfileWidget";
+import { MenuIcon } from "./Icons";
 
 const TopNav = ({ userName, breadcrumb = "Overview" }) => {
   const navigate = useNavigate();
@@ -38,10 +39,15 @@ const TopNav = ({ userName, breadcrumb = "Overview" }) => {
 
   return (
     <header className="app-header">
-      <div className="header-breadcrumbs">
-        <span className="brand">Bug Tracker</span>
-        <span>/</span>
-        <span>{breadcrumb}</span>
+      <div style={{ display: 'flex', alignItems: 'center' }}>
+        <button className="mobile-menu-btn-alt" onClick={() => window.dispatchEvent(new Event('toggleSidebar'))}>
+          <MenuIcon size={24} />
+        </button>
+        <div className="header-breadcrumbs">
+          <span className="brand">Bug Tracker</span>
+          <span>/</span>
+          <span>{breadcrumb}</span>
+        </div>
       </div>
       <div className="header-actions" style={{ position: 'relative' }}>
         <div 
